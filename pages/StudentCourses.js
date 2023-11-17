@@ -14,7 +14,7 @@ export default function Createcourse({navigation}) {
   const [courseList, setcourse] = useState([]); // array that stores all the outcomes that the user has entered
 
   const getcourse = () => {
-    return fetch('http://10.203.196.83:5000/courses')
+    return fetch('http://10.203.244.47:5000/courses')
     .then(response => response.text())
     .then(json => {
       for (let i = 0; i < JSON.parse(json).length; i++){

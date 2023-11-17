@@ -34,7 +34,7 @@ export default function CourseReviewForm({route, navigation}) {
       const topi = [];
       for (let i = 0; i < questions.length; i++){
         console.log(questions);
-        fetch(`http://10.203.196.83:5000/checklist/insertAnswer?outcome=${questions[i].answer ? 'yes' : 'no'}&&items=${questions[i].checkListItemID}&&comment=${comment}&&topic=${route.params.topic}&&studentNumber=${1234567}&&courseName=${route.params.course_name}`)
+        fetch(`http://10.203.244.47:5000/checklist/insertAnswer?outcome=${questions[i].answer ? 'yes' : 'no'}&&items=${questions[i].checkListItemID}&&comment=${comment}&&topic=${route.params.topic}&&studentNumber=${1234567}&&courseName=${route.params.course_name}`)
         .then(response => response.text())
         .then(json => {
           console.log(json);
@@ -44,7 +44,7 @@ export default function CourseReviewForm({route, navigation}) {
         });
       }
       console.log(topi);
-      navigation.navigate('Student', {course_name: route.params.course_name, topic : route.params.topic, questions: route.params.questions});
+      navigation.navigate('StudentCourses');
     };
 
   

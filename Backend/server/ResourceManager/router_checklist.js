@@ -165,7 +165,7 @@ checkListRouter.post('/checklist/insert',(req,res)=>{
   let visibility = req.body.visibility;
   let items      = req.body.items;  
 
-  
+  // TODO NO LONGER DELETING
   let cond_query = `SELECT COUNT(topic) FROM checklist WHERE topic=?`;
 
   configuration.connection.query(cond_query,[topic],(err,rows)=>{
@@ -174,7 +174,7 @@ checkListRouter.post('/checklist/insert',(req,res)=>{
     }
     else{
         console.log(rows[0]["COUNT(topic)"]);
-      if(rows[0]["COUNT(topic)"] != 0 && items.length !=1){
+      if(rows[0]["COUNT(topic)"] != 0 ){
         configuration.connection.query("DELETE FROM checklistitems WHERE checkListID= (SELECT checkListID FROM checklist WHERE topic = ?)",[topic],(err,rows)=>{
           if(err) {
             console.log(err);
@@ -259,7 +259,7 @@ checkListRouter.get('/checklist/insertAnswer',(req,res)=>{
   // }
 
   // sending comments to comment table
-  let query = "INSERT INTO comment(checkListItemID, comment) VALUES ((SELECT checkListID FROM checklist WHERE topic = ?), ?)";
+  let query = "INSERT INTO comment(checkListID, comment) VALUES ((SELECT checkListID FROM checklist WHERE topic = ?), ?)";
   configuration.connection.getConnection((err,con)=>{
     // Insert new checklist in table
     con.query(query,[topic, comment],(err,rows)=>{
@@ -312,25 +312,16 @@ checkListRouter.get('/checklist/completed',(req, res)=>{
     let studentNumber = req.query.studentNumber;
     let courseName = req.query.courseName;
     let checkListTopic = req.query.topic;
-    console.log(studentNumber);
-    let query = `SELECT DISTINCT
-                students.studentID,
-                checklist.checkListID,
-                checklist.deadline,
-                checklist.topic,
-                course.courseName
-                FROM 
-                students    
-                JOIN
-                  completedchecklist ON completedchecklist.studentID = students.studentID
-                JOIN 
-                  checklist ON checklist.checkListID = completedchecklist.checkListID
-                JOIN 
-                  course ON course.courseID = completedchecklist.courseID
-                WHERE students.studentNumber = ?
-                `;
 
-    configuration.connection.query(query,[studentNumber],(err,results)=>{
+    /**
+     * Update database using stored procedure
+     * NAME : checkListCompleted
+     * Argc : 3
+     * Arguments = courseName,studentNumber,checkListTopic
+     *  */ 
+    
+    let query = "CALL checklistcompleted(?,?,?)";
+    configuration.connection.query(query,[courseName,studentNumber,checkListTopic],(err,results)=>{
         if(err){
           res.json({
             success:false,
@@ -339,7 +330,7 @@ checkListRouter.get('/checklist/completed',(req, res)=>{
         }else{
           res.json({
             success:true,
-            message:"Succesfully retrieved",
+            message:"Succesfully updated",
             results
           }); 
         }
@@ -347,40 +338,6 @@ checkListRouter.get('/checklist/completed',(req, res)=>{
 });
 
 
-/**
- * TODO : submit ENDPOINT 
- * Used when submitting everything that a student has entered, the outcomes and stuff corresponding to the checklist items
- */
-checkListRouter.post('/checklist/submit',(req,res)=>{
-  let studentNumber = req.body.studentNumber;
-  let courseName = req.body.courseName;
-  let checkListTopic = req.body.topic;
-  let outcomes = req.body.outcomes;
-
-
-      /**
-     * Update database using stored procedure
-     * NAME : checkListCompleted
-     * Argc : 3
-     * Arguments = courseName,studentNumber,checkListTopic
-     *  */ 
-    
-    let query = "CALL checklistcompleted(?,?,?,?)";
-    configuration.connection.query(query,[courseName,studentNumber,checkListTopic,outcomes],(err,results)=>{
-      if(err){
-        res.json({
-          success:false,
-          message:err
-        });
-      }else{
-        res.json({
-          success:true,
-          message:"Succesfully retrieved",
-          results
-        }); 
-      }
-  });
-});
 checkListRouter.get('/checklist/delete',(req,res)=>{
   let courseName = req.query.courseName;
   let topic = req.query.topic;

@@ -166,7 +166,7 @@ ALTER TABLE `checklistitems`
 --
 ALTER TABLE `comment`
   ADD PRIMARY KEY (`commentID`),
-  ADD KEY `checkListItemID` (`checkListItemID`);
+  ADD KEY `checkListID` (`checkListID`);
 
 --
 -- Indexes for table `completedchecklist`
@@ -303,7 +303,7 @@ ALTER TABLE `checklistitems`
 -- Constraints for table `comment`
 --
 ALTER TABLE `comment`
-  ADD CONSTRAINT `comment_ibfk_1` FOREIGN KEY (`checkListItemID`) REFERENCES `checklistitems` (`checkListItemID`)  ON DELETE CASCADE;
+  ADD CONSTRAINT `comment_ibfk_1` FOREIGN KEY (`checkListID`) REFERENCES `checklist` (`checkListID`)  ON DELETE CASCADE;
 
 --
 -- Constraints for table `completedchecklist`

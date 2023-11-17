@@ -31,7 +31,7 @@ export default function CreateTopic({route, navigation}) {
 
   const visibilty = (topic,visibility) => {
     console.log(visibility);
-    fetch(`http://10.203.196.83:5000/checklist/visibility?courseName=${courseName}&&topic=${topic}&&visibility=${visibility}`)
+    fetch(`http://10.203.244.47:5000/checklist/visibility?courseName=${courseName}&&topic=${topic}&&visibility=${visibility}`)
     .then(response => response.text())
     .then(json => {
       console.log(json);
@@ -52,7 +52,7 @@ export default function CreateTopic({route, navigation}) {
   };
 
   const getTopic = () => {
-    return fetch(`http://10.203.196.83:5000/checklist/retrieve?courseName=${route.params.course}`)
+    return fetch(`http://10.203.244.47:5000/checklist/retrieve?courseName=${route.params.course}`)
     .then(response => response.text())
     .then(json => {
       setCourseName(route.params.course);
@@ -71,7 +71,7 @@ export default function CreateTopic({route, navigation}) {
 
   
   const deleteTopicDatabase = (topic) => {
-    fetch(`http://10.203.196.83:5000/checklist/delete?courseName=${courseName}&&topic=${topic}`)
+    fetch(`http://10.203.244.47:5000/checklist/delete?courseName=${courseName}&&topic=${topic}`)
     .then(response => response.text())
     .then(json => {
       console.log(json);

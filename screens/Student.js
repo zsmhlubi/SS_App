@@ -90,7 +90,7 @@ const Student = ({route, navigation}) => {
   };
 
   const getTopic = () => {
-    return fetch(`http://10.203.196.83:5000/checklist/getQuestions?studentNumber=1234567&&courseName=${route.params.course}`)
+    return fetch(`http://10.203.244.47:5000/checklist/getQuestions?studentNumber=1234567&&courseName=${route.params.course}`)
       .then(response => response.text())
       .then(json => {
         setCourseName(prevCourseName => {
@@ -119,7 +119,7 @@ const Student = ({route, navigation}) => {
   };
 
   const getTopicFirst = () => {
-    return fetch(`http://10.203.196.83:5000/checklist/completed_lists?studentNumber=1234567`)
+    return fetch(`http://10.203.244.47:5000/checklist/completed_lists?studentNumber=1234567`)
       .then(response => response.text())
       .then(json => {
         for (let i = 0; i < JSON.parse(json).response.length; i++){

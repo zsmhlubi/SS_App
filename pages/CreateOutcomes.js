@@ -13,7 +13,7 @@ export default function CreateOutcomes({route, navigation}) {
   const [topicList, setTopic] = useState([]); // array that stores all the outcomes that the user has entered
 
   const getTopic = () => {
-    return fetch(`http://10.203.196.83:5000/checklist/retrieve?courseName=${route.params.course_name}`)
+    return fetch(`http://10.203.244.47:5000/checklist/retrieve?courseName=${route.params.course_name}`)
     .then(response => response.text())
     .then(json => {
       for (let i = 0; i < JSON.parse(json).length; i++){
@@ -36,7 +36,7 @@ export default function CreateOutcomes({route, navigation}) {
     for (let i = 0; i < topicList.length; i++){
       topi.push(topicList[i].addtopic);
     }
-    fetch('http://10.203.196.83:5000/checklist/insert?studentNumber=1234567', {
+    fetch('http://10.203.244.47:5000/checklist/insert?studentNumber=1234567', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -151,7 +151,7 @@ export default function CreateOutcomes({route, navigation}) {
         <Separator/>
         {/* send outcome */}
         <TouchableOpacity onPress= {() => sendTopic()} style={styles.modelView}>
-          <Text style = {{fontFamily : 'serif', fontSize : 20, fontWeight: 'bold'}}>Done</Text>
+          <Text style = {{fontFamily : 'serif', fontSize : 20, fontWeight: 'bold'}}>Save</Text>
         </TouchableOpacity> 
 
       </ScrollView>
