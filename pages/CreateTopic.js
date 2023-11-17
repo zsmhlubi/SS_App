@@ -5,7 +5,7 @@ import {getDate, getFormatedDate} from 'react-native-modern-datepicker';
 import { TouchableOpacity, SafeAreaView, Text, StatusBar, View, Image, TextInput, Button, ScrollView, Alert, Modal} from 'react-native';
 
 
-export default function CreateTopic({navigation}) {
+export default function CreateTopic({route, navigation}) {
 
   const Separator = () => <View style={styles.separator} />;
   const ButtonSeparation = () => <View style={styles.button_separation} />;
@@ -24,9 +24,22 @@ export default function CreateTopic({navigation}) {
 
   const enable = (topicIndex) => { // function to change the text on the button to enable visibility
     const updatedTextList = [...topicList];
+    visibilty(updatedTextList[topicIndex].addtopic, updatedTextList[topicIndex].enabled ? 'no' : 'yes')
     updatedTextList[topicIndex].enabled = !updatedTextList[topicIndex].enabled; // used to enable and disable the visiblility of the outcomes visible to student 
     setTopic(updatedTextList);
   };
+
+  const visibilty = (topic,visibility) => {
+    console.log(visibility);
+    fetch(`http://10.203.196.83:5000/checklist/visibility?courseName=${courseName}&&topic=${topic}&&visibility=${visibility}`)
+    .then(response => response.text())
+    .then(json => {
+      console.log(json);
+    })
+    .catch(error => {
+      console.error(error);
+    });
+  }
 
   const optionChoosen = () => {
     setViewCalenderState(!viewCalender);
@@ -39,14 +52,16 @@ export default function CreateTopic({navigation}) {
   };
 
   const getTopic = () => {
-    return fetch('http://172.17.0.1:5000/checklist/retrieve?studentNumber=1234567')
+    return fetch(`http://10.203.196.83:5000/checklist/retrieve?courseName=${route.params.course}`)
     .then(response => response.text())
     .then(json => {
-      setCourseName(JSON.parse(json)[0].course_name);
+      setCourseName(route.params.course);
+      // console.log(json.text);
       for (let i = 0; i < JSON.parse(json).length; i++){
-        const newTopic = {outcome: '', addtopic: JSON.parse(json)[i].topic, enabled: JSON.parse(json)[i].visibility === 'yes'};
-        setTopic([...topicList, newTopic]);
-        topicList.push(newTopic);
+          const newTopic = {outcome: '', addtopic: JSON.parse(json)[i].topic, enabled: JSON.parse(json)[i].visibility === 'yes'};
+          setTopic([...topicList, newTopic]);
+          topicList.push(newTopic);
+        
       }
     })
     .catch(error => {
@@ -55,19 +70,16 @@ export default function CreateTopic({navigation}) {
   };
 
   
-  // const sendTopic = () => {
-  //   fetch('http://172.17.0.1:5000/checklist/retrieve?studentNumber=1234567', {
-  //     method: 'POST',
-  //     headers: {
-  //       Accept: 'application/json',
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify({
-  //       firstParam: 'yourValue',
-  //       secondParam: 'yourOtherValue',
-  //     }),
-  //   });
-  // };
+  const deleteTopicDatabase = (topic) => {
+    fetch(`http://10.203.196.83:5000/checklist/delete?courseName=${courseName}&&topic=${topic}`)
+    .then(response => response.text())
+    .then(json => {
+      console.log(json);
+    })
+    .catch(error => {
+      console.error(error);
+    });
+  };
 
   const addTopic = (topic) => { // fuction that adds the text to be reviewed and also adds the buttons to delete, enable or disable the outcome to students
     if (topic !== ""){
@@ -85,6 +97,8 @@ export default function CreateTopic({navigation}) {
 
   const deleteTopic = (topicIndex) => {
     const prevTextList = [...topicList];
+    deleteTopicDatabase(prevTextList[topicIndex].addtopic);
+    
     prevTextList.splice(topicIndex, 1);
     setTopic(prevTextList);
   };
@@ -97,7 +111,7 @@ export default function CreateTopic({navigation}) {
     <SafeAreaView style={styles.container}>
       <ScrollView style = {styles.scroll}>
 
-        <Text style = {{fontSize : 25, fontWeight: 'bold', fontFamily: 'serif' }}>{courseName}</Text>
+        <Text style = {styles.courseNameText}>{route.params.course}</Text>
 
         {topicList.map((topic, topicIndex) => (
           <TouchableOpacity onPress={() => navigation.navigate('CreateOutcomes', {choosenTopic: topic.addtopic, deadLine : closingDate, course_name : courseName, visibility : topic.enabled })} key={topicIndex}>

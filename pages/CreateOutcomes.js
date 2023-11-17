@@ -2,17 +2,18 @@ import React, { useState, useEffect } from 'react';
 import styles from '../styles';
 import { TouchableOpacity, SafeAreaView, Text, StatusBar, View, Image, TextInput, Button, ScrollView, Alert, Touchable} from 'react-native';
 
-export default function CreateOutcomes({route}) {
+export default function CreateOutcomes({route, navigation}) {
 
   const Separator = () => <View style={styles.separator} />;
   const ButtonSeparation = () => <View style={styles.button_separation} />;
   const IconSeparation = () => <View style={styles.icon_separation} />;
+  const SeparatorV = () => <View style= {styles.separateV}/>
 
   const [topic, enteredTopic] = useState(""); // used to capture entered text in the input text                                   
   const [topicList, setTopic] = useState([]); // array that stores all the outcomes that the user has entered
 
   const getTopic = () => {
-    return fetch('http://172.17.0.1:5000/checklist/retrieve?studentNumber=1234567')
+    return fetch(`http://10.203.196.83:5000/checklist/retrieve?courseName=${route.params.course_name}`)
     .then(response => response.text())
     .then(json => {
       for (let i = 0; i < JSON.parse(json).length; i++){
@@ -35,7 +36,7 @@ export default function CreateOutcomes({route}) {
     for (let i = 0; i < topicList.length; i++){
       topi.push(topicList[i].addtopic);
     }
-    fetch('http://172.17.0.1:5000/checklist/insert?studentNumber=1234567', {
+    fetch('http://10.203.196.83:5000/checklist/insert?studentNumber=1234567', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -54,7 +55,7 @@ export default function CreateOutcomes({route}) {
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-      console.log(response);
+      // console.log(response);
     })
     .then(data => {
       console.log(data);
@@ -62,6 +63,7 @@ export default function CreateOutcomes({route}) {
     .catch(error => {
       console.error('There was a problem with the request:', error);
     });
+    navigation.navigate('CreateTopics', {course: route.params.course_name});
   };
 
   const addTopic = (topic) => { // fuction that adds the text to be reviewed and also adds the buttons to delete, enable or disable the outcome to students
@@ -86,8 +88,24 @@ export default function CreateOutcomes({route}) {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style = {styles.scroll}>
+        <View style = {styles.new}>
+          <IconSeparation/>
 
-        <Text style = {{fontSize : 20, fontWeight: 'bold'}}>{route.params.choosenTopic}</Text>
+          <TouchableOpacity onPress= {() => navigation.navigate('Analysis')}>
+            <Image
+              style = {styles.addingLogo}
+              source = {require('./../icons/analysis.png')}
+              alignSelf = "flex-end"
+            />
+          </TouchableOpacity>
+
+          <Text style = {styles.courseNameText}>{route.params.choosenTopic}</Text>
+    
+        </View>
+
+    
+
+        
         
         {topicList.map((topic, topicIndex) => (
           // <TouchableOpacity onPress={() => alert("pressed")} key={topicIndex}>
