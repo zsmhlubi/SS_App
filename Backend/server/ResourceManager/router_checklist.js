@@ -56,11 +56,8 @@ checkListRouter.get('/checklist/retrieve',(req,res)=>{
 });
 
 checkListRouter.get('/courses',(req,res)=>{
-  let query = `SELECT *
-        FROM
-          course`;  
+  let query = `SELECT * FROM course`;  
 
-  
   configuration.connection.query(query,(err,result)=>{
     if(err){res.json({success:false , err})}
     else{
@@ -157,6 +154,139 @@ checkListRouter.get('/checklist/completed_lists',(req,res)=>{
     }
   })
 });
+
+checkListRouter.get('/completed_checklist',(req,res)=>{
+  let courseName = req.query.courseName;
+  let topic = req.query.topic;
+  let query = `SELECT 
+            s.studentID
+          FROM 
+            students s
+          JOIN
+            completedchecklist cc ON s.studentID = cc.studentID
+          JOIN 
+            checklist c ON cc.checkListID = c.checkListID
+          JOIN 
+            course cr ON cc.courseID = cr.courseID
+          WHERE 
+            c.topic COLLATE utf8mb4_general_ci = ?
+            AND cr.courseName COLLATE utf8mb4_general_ci = ?`;
+
+  configuration.connection.query(query,[topic, courseName],(err,response)=>{
+    if(err){
+      console.error(err);
+      res.json({err});
+    }else{
+      console.log(response);
+      res.json({response})
+    }
+  })
+});
+
+checkListRouter.get('/notcompleted_checklist',(req,res)=>{
+  let courseName = req.query.courseName;
+  let topic = req.query.topic;
+  let query = `SELECT 
+            s.studentID
+          FROM 
+            students s
+          JOIN 
+            enrollment e ON s.studentID = e.studentID
+          JOIN 
+            course c ON e.courseID = c.courseID
+          LEFT JOIN 
+            completedchecklist cc ON s.studentID = cc.studentID 
+          AND 
+            c.courseID = cc.courseID
+          LEFT JOIN 
+            checklist cl ON c.courseID = cl.courseID
+          WHERE 
+            cl.topic COLLATE utf8mb4_general_ci = ?
+          AND 
+            c.courseName COLLATE utf8mb4_general_ci = ?
+          AND 
+            cc.completionID IS NULL`;
+
+  configuration.connection.query(query,[topic, courseName],(err,response)=>{
+    if(err){
+      console.error(err);
+      res.json({err});
+    }else{
+      console.log(response);
+      res.json({response})
+    }
+  })
+});
+
+checkListRouter.get('/getOutcomes',(req,res)=>{
+  let courseName = req.query.courseName;
+  let topic = req.query.topic;
+  let query = `SELECT
+          ci.checkListItemID,
+          ci.checkListItem,
+          cl.topic,
+          s.studentID,
+          o.outcome
+        FROM
+          checklist cl
+        JOIN
+          checklistitems ci ON cl.checkListID = ci.checkListID
+        JOIN
+          outcomes o ON ci.checkListItemID = o.checkListItemID
+        JOIN
+          completedchecklist cc ON cl.checkListID = cc.checkListID
+        JOIN
+          students s ON cc.studentID = s.studentID
+        JOIN
+          course cr ON cl.courseID = cr.courseID
+        WHERE
+          cl.topic = ? AND
+          cr.courseName = ?`;
+
+  configuration.connection.query(query,[topic, courseName],(err,response)=>{
+    if(err){
+      console.error(err);
+      res.json({err});
+    }else{
+      console.log(response);
+      res.json({response})
+    }
+  })
+});
+
+
+checkListRouter.get('/comments',(req,res)=>{
+  let courseName = req.query.courseName;
+  let topic = req.query.topic;
+  let query = `SELECT
+          c.commentID,
+          c.checkListID,
+          c.comment,
+          cl.topic,
+          cr.courseName
+        FROM
+          comment c
+        JOIN
+          checklist cl ON c.checkListID = cl.checkListID
+        JOIN
+          course cr ON cl.courseID = cr.courseID
+        WHERE
+          cl.topic = ? 
+        AND
+          cr.courseName = ?`;
+
+  configuration.connection.query(query,[topic, courseName],(err,response)=>{
+    if(err){
+      console.error(err);
+      res.json({err});
+    }else{
+      console.log(response);
+      res.json({response})
+    }
+  })
+});
+
+
 checkListRouter.post('/checklist/insert',(req,res)=>{
 
   let courseName = req.body.courseName;   

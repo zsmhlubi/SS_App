@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
       fontWeight: 'bold', 
       fontFamily: 'serif', 
       paddingLeft: 20,
-      alignSelf : 'flex-start'
+      alignSelf: 'center'
     },
     
     viewAnalysis: {

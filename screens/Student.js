@@ -90,7 +90,7 @@ const Student = ({route, navigation}) => {
   };
 
   const getTopic = () => {
-    return fetch(`http://10.203.244.47:5000/checklist/getQuestions?studentNumber=1234567&&courseName=${route.params.course}`)
+    return fetch(`http://172.16.8.143:5000/checklist/getQuestions?studentNumber=1234567&&courseName=${route.params.course}`)
       .then(response => response.text())
       .then(json => {
         setCourseName(prevCourseName => {
@@ -101,7 +101,8 @@ const Student = ({route, navigation}) => {
               const newTopic = { 
                 name: 
                   JSON.parse(json)[i].topic, 
-                status: isTopicCompleted(JSON.parse(json)[i].topic,) ? 'Completed' : 'Incomplete', 
+                status: 
+                  isTopicCompleted(JSON.parse(json)[i].topic) ? 'Completed' : 'Incomplete', 
                 visible: 
                   JSON.parse(json)[i].visibility === 'yes' ? true : false,
                 questions:
@@ -119,12 +120,12 @@ const Student = ({route, navigation}) => {
   };
 
   const getTopicFirst = () => {
-    return fetch(`http://10.203.244.47:5000/checklist/completed_lists?studentNumber=1234567`)
+    return fetch(`http://172.16.8.143:5000/checklist/completed_lists?studentNumber=1234567`)
       .then(response => response.text())
       .then(json => {
         for (let i = 0; i < JSON.parse(json).response.length; i++){
           // console.log(JSON.parse(json).response[i].courseName);
-          setcompleted([...completed, JSON.parse(json).response[i].courseName]);
+          setcompleted([...completed, JSON.parse(json).response[i].topic]);
           completed.push(JSON.parse(json).response[i].topic);
         }
         // console.log(JSON.parse(json).response);

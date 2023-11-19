@@ -12,6 +12,7 @@ import StudentCourses from './pages/StudentCourses';
 import Manual from './pages/Manual';
 import Analysis from './pages/Analysis';
 import MessagePage from './pages/MessagePage';
+import Comments from './pages/Comments';
 
 
 const Stack = createNativeStackNavigator();
@@ -42,6 +43,7 @@ const MyStack = () => {
         <Stack.Screen name="Manual" component={Manual}/>
         <Stack.Screen name="Analysis" component={Analysis}/>
         <Stack.Screen name="MessagePage" component={MessagePage}/>
+        <Stack.Screen name="Comments" component={Comments}/>
         {/* Add more screens as needed */}
       </Stack.Navigator>
     </NavigationContainer>

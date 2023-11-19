@@ -31,10 +31,11 @@ export default function CourseReviewForm({route, navigation}) {
     };
 
     const sendAnswers = () => {
+      Alert.alert('Thank you for your response\n\n Please wait.....');
       const topi = [];
       for (let i = 0; i < questions.length; i++){
-        console.log(questions);
-        fetch(`http://10.203.244.47:5000/checklist/insertAnswer?outcome=${questions[i].answer ? 'yes' : 'no'}&&items=${questions[i].checkListItemID}&&comment=${comment}&&topic=${route.params.topic}&&studentNumber=${1234567}&&courseName=${route.params.course_name}`)
+        // console.log(questions);
+        fetch(`http://172.16.8.143:5000/checklist/insertAnswer?outcome=${questions[i].answer ? 'yes' : 'no'}&&items=${questions[i].checkListItemID}&&comment=${comment}&&topic=${route.params.topic}&&studentNumber=${1234567}&&courseName=${route.params.course_name}`)
         .then(response => response.text())
         .then(json => {
           console.log(json);

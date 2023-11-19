@@ -29,17 +29,50 @@ export default function CreateTopic({route, navigation}) {
     setTopic(updatedTextList);
   };
 
+
   const visibilty = (topic,visibility) => {
-    console.log(visibility);
-    fetch(`http://10.203.244.47:5000/checklist/visibility?courseName=${courseName}&&topic=${topic}&&visibility=${visibility}`)
-    .then(response => response.text())
-    .then(json => {
-      console.log(json);
+    const topi = [];
+    for (let i = 0; i < topicList.length; i++){
+      topi.push(topicList[i].addtopic);
+    }
+    fetch('http://172.16.8.143:5000/checklist/visibility', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        topic : topic,
+        courseName : courseName,
+        visibility : visibility,
+      }),
+      
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      // console.log(response);
+    })
+    .then(data => {
+      console.log(data);
     })
     .catch(error => {
-      console.error(error);
+      console.error('There was a problem with the request:', error);
     });
-  }
+    navigation.navigate('CreateTopics', {course: route.params.course_name});
+  };
+
+  // const visibilty = () => {
+  //   fetch(`http://172.16.8.143:5000/checklist/visibility?courseName=${courseName}&&topic=${topic}&&visibility=${visibility}`)
+  //   .then(response => response.text())
+  //   .then(json => {
+  //     console.log(json);
+  //   })
+  //   .catch(error => {
+  //     console.error(error);
+  //   });
+  // }
 
   const optionChoosen = () => {
     setViewCalenderState(!viewCalender);
@@ -52,7 +85,7 @@ export default function CreateTopic({route, navigation}) {
   };
 
   const getTopic = () => {
-    return fetch(`http://10.203.244.47:5000/checklist/retrieve?courseName=${route.params.course}`)
+    return fetch(`http://172.16.8.143:5000/checklist/retrieve?courseName=${route.params.course}`)
     .then(response => response.text())
     .then(json => {
       setCourseName(route.params.course);
@@ -71,7 +104,7 @@ export default function CreateTopic({route, navigation}) {
 
   
   const deleteTopicDatabase = (topic) => {
-    fetch(`http://10.203.244.47:5000/checklist/delete?courseName=${courseName}&&topic=${topic}`)
+    fetch(`http://172.16.8.143:5000/checklist/delete?courseName=${courseName}&&topic=${topic}`)
     .then(response => response.text())
     .then(json => {
       console.log(json);

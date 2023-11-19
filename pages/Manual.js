@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, SafeAreaView, ScrollView } from 'react-native';
 import styles from '../styles';
 
-const MainPage = ({ navigation }) => {
+const Manual = ({ navigation }) => {
     const Separator = () => <View style={styles.separator} />;
     const TopicSeparator = () => <View style={styles.button_separation} />;
     return (
@@ -64,4 +64,4 @@ const MainPage = ({ navigation }) => {
     );
 };
 
-export default MainPage;
+export default Manual;
